@@ -1,0 +1,51 @@
+{% extends "global/base.html" %}
+
+{% block content %}
+
+    <form class="registration-form" action="{% url 'register_customer_api' %}" method="POST">
+    {% csrf_token %}
+
+    <h2>Customer Registration</h2>
+
+    <table>
+        <tr>
+            <td class="form-group">
+                <label for="first_name">First Name</label>
+                <input type="text" id="first_name" name="user[first_name]" placeholder="Enter your first name" required>
+            </td>
+            <td class="form-group">
+                <label for="last_name">Last Name</label>
+                <input type="text" id="last_name" name="user[last_name]" placeholder="Enter your last name" required>
+            </td>
+        </tr>
+        <tr>
+            <td class="form-group" colspan="2">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="user[email]" placeholder="Enter your email address" required>
+            </td>
+        </tr>
+        <tr>
+            <td class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="user[username]" placeholder="Enter your username" required>
+            </td>
+            <td class="form-group">
+                <label for="phone">Phone</label>
+                <input type="text" id="phone" name="phone" placeholder="Enter your phone number" required>
+            </td>
+        </tr>
+        <tr>
+            <td class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="user[password]" placeholder="Enter your password" required>
+            </td>
+            <td class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="user[confirm_password]" placeholder="Confirm your password" required>
+            </td>
+        </tr>
+    </table>
+
+    <button type="submit" class="btn">Register</button>
+</form>
+{% endblock content %}
