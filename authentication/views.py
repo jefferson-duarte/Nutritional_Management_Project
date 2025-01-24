@@ -9,6 +9,10 @@ from .serializers import (CustomerProfileSerializer,
                           NutritionistProfileSerializer)
 
 
+def home(request):
+    return render(request, 'authentication/home.html')
+
+
 def login(request):
     return render(request, 'authentication/login.html')
 
@@ -19,6 +23,10 @@ def register_nutritionist(request):
 
 def register_customer(request):
     return render(request, 'authentication/customer_registration.html')
+
+
+def dashboard(request):
+    return render(request, 'authentication/dashboard.html')
 
 
 class RegisterNutritionistView(APIView):

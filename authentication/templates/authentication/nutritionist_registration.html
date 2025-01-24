@@ -1,55 +1,57 @@
 {% extends "global/base.html" %}
 
+{% block title %}Nutritionist Registration{% endblock title %}
+
 {% block content %}
+<div class="container my-5">
+    <div class="card shadow-lg p-4 rounded-4">
+        <h2 class="text-center mb-4" style="font-size: 2rem;">Nutritionist Registration</h2>
+        <form class="registration-form" action="{% url 'register_nutritionist_api' %}" method="POST">
+            {% csrf_token %}
 
-    <form class="registration-form" action="{% url 'register_nutritionist_api' %}" method="POST">
-    {% csrf_token %}
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <label for="first_name" class="form-label" style="font-size: 1.1rem;">First Name</label>
+                    <input type="text" id="first_name" name="user[first_name]" class="form-control form-control-lg" placeholder="Enter your first name" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="last_name" class="form-label" style="font-size: 1.1rem;">Last Name</label>
+                    <input type="text" id="last_name" name="user[last_name]" class="form-control form-control-lg" placeholder="Enter your last name" required>
+                </div>
 
-    <h2>Nutritionist Registration</h2>
+                <div class="col-12">
+                    <label for="email" class="form-label" style="font-size: 1.1rem;">Email</label>
+                    <input type="email" id="email" name="user[email]" class="form-control form-control-lg" placeholder="Enter your email address" required>
+                </div>
 
-    <table>
-        <tr>
-            <td class="form-group">
-                <label for="first_name">First Name</label>
-                <input type="text" id="first_name" name="user[first_name]" placeholder="Enter your first name" required>
-            </td>
-            <td class="form-group">
-                <label for="last_name">Last Name</label>
-                <input type="text" id="last_name" name="user[last_name]" placeholder="Enter your last name" required>
-            </td>
-        </tr>
-        <tr>
-            <td class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="user[username]" placeholder="Enter your username" required>
-            </td>
-            <td class="form-group">
-                <label for="registration_number">Registration Number</label>
-                <input type="text" id="registration_number" name="registration_number" placeholder="Enter your registration number" required>
-            </td>
-        </tr>
-        <tr>
-            <td class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="user[email]" placeholder="Enter your email address" required>
-            </td>
-            <td class="form-group">
-                <label for="phone">Phone</label>
-                <input type="text" id="phone" name="phone" placeholder="Enter your phone number" required>
-            </td>
-        </tr>
-        <tr>
-            <td class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="user[password]" placeholder="Enter your password" required>
-            </td>
-            <td class="form-group">
-                <label for="confirm_password">Confirm Password</label>
-                <input type="password" id="confirm_password" name="user[confirm_password]" placeholder="Confirm your password" required>
-            </td>
-        </tr>
-    </table>
+                <div class="col-md-12">
+                    <label for="username" class="form-label" style="font-size: 1.1rem;">Username</label>
+                    <input type="text" id="username" name="user[username]" class="form-control form-control-lg" placeholder="Enter your username" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="registration_number" class="form-label" style="font-size: 1.1rem;">Registration Number</label>
+                    <input type="text" id="registration_number" name="registration_number" class="form-control form-control-lg" placeholder="Enter your registration number" required>
+                </div>
 
-    <button type="submit" class="btn">Register</button>
-</form>
+                <div class="col-md-6">
+                    <label for="phone" class="form-label" style="font-size: 1.1rem;">Phone</label>
+                    <input type="text" id="phone" name="phone" class="form-control form-control-lg" placeholder="Enter your phone number" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="password" class="form-label" style="font-size: 1.1rem;">Password</label>
+                    <input type="password" id="password" name="user[password]" class="form-control form-control-lg" placeholder="Enter your password" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="confirm_password" class="form-label" style="font-size: 1.1rem;">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="user[confirm_password]" class="form-control form-control-lg" placeholder="Confirm your password" required>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary px-5 py-2" style="font-size: 1.1rem;">Register</button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock content %}
