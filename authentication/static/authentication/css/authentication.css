@@ -4,6 +4,14 @@
   margin: 0 auto;
 }
 
+.registration-form h2 {
+  font-size: 4rem;
+}
+
+.registration-form .btn {
+  font-size: 2rem;
+}
+
 .card {
   background-color: #fff;
   border: none;
@@ -32,27 +40,12 @@
 
 .login-form h2 {
   margin-bottom: 20px;
-  font-size: 2rem; /* Increased font size */
+  font-size: 4rem; /* Increased font size */
   text-align: center;
 }
 
-.form-group {
-  margin-bottom: 20px; /* Increased spacing for clarity */
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-size: 1rem; /* Increased font size */
-  font-weight: bold;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 12px; /* Increased padding for better usability */
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem; /* Adjusted font size */
+.login-form .btn {
+  font-size: 2rem;
 }
 
 .btn {
