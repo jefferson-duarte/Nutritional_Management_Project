@@ -5,7 +5,8 @@
 {% block content %}
   <div class="container my-5">
     <div class="card shadow-lg p-4 rounded-4">
-      <form class="login-form">
+      <form class="login-form" method="POST" action="{% url "login_create" %}">
+        {% csrf_token %}
         <h2 class="text-center mb-4">Login</h2>
         <div class="row g-4">
           <div class="col-12">
@@ -22,8 +23,17 @@
         <div class="text-center mt-4">
           <button type="submit" class="btn btn-primary px-5 py-2">Login</button>
         </div>
+        
+        <div class="messages-container">
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert {{message.tags}} mt-3">
+                {{message}}
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
 
-        <p class="error-message text-danger text-center mt-3"></p>
       </form>
     </div>
   </div>
@@ -45,6 +55,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}',
           },
           body: JSON.stringify({ username, password }),
         });
@@ -71,5 +82,31 @@
         errorMessage.style.display = 'block';
       }
     });
+
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+  
+  const csrftoken = getCookie('csrftoken');
+  
+  const response = await fetch('/api/token/', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken,
+      },
+      body: JSON.stringify({ username, password }),
+  });
   </script>
 {% endblock content %}

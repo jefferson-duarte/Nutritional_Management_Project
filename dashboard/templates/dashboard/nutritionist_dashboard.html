@@ -1,0 +1,88 @@
+{% extends "global/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+  <div class="container mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Nutritionist Dashboard</h1>
+
+    <div class="messages-container">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert {{message.tags}} mt-3">
+            {{message}}
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    <!-- Patients List -->
+    <div class="bg-white p-6 rounded-lg shadow mb-6">
+      <h2 class="text-xl font-semibold mb-4">Patients List</h2>
+      <div class="patient-list">
+        {% for customer in customers %}
+          <div class="flex items-center justify-between p-4 border-b cursor-pointer" onclick="showPatientDetails('{{customer.user.id}}')">
+            <div class="flex items-center gap-4">
+              <img src="https://via.placeholder.com/50" alt="{{customer.user.first_name}} {{customer.user.last_name}}">
+              <div>
+                <p class="font-semibold">{{customer.user.first_name}} {{customer.user.last_name}}</p>
+                <p class="text-lg text-gray-600">Active</p>
+              </div>
+            </div>
+            <p class="text-lg text-gray-600">Last appointment: {{customer.last_appointment|date:"d/m/Y"}}</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Patient Details (Full Profile) -->
+    {% for customer in customers %}
+      <div id="patient-details-{{customer.user.id}}" class="patient-details bg-white p-6 rounded-lg shadow mb-6" style="display: none;">
+        <h2 class="text-xl font-semibold mb-4">Full Profile - {{customer.user.first_name}} {{customer.user.last_name}}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {% comment %} <div>
+            <p><strong>Age:</strong> {{customer.age}} years</p>
+            <p><strong>Gender:</strong> {{customer.gender}}</p>
+            <p><strong>Height:</strong> {{customer.height}} m</p>
+            <p><strong>Weight:</strong> {{customer.weight}} kg</p>
+          </div>
+          <div>
+            <p><strong>Nutritional Goal:</strong> {{customer.nutritional_goal}}</p>
+            <p><strong>Diet Plan:</strong> {{customer.diet_plan}}</p>
+            <p><strong>Allergies:</strong> {{customer.allergies}}</p>
+            <p><strong>Last Appointment:</strong> {{customer.last_appointment|date:"d/m/Y"}}</p>
+          </div> {% endcomment %}
+          <div>
+            <p><strong>Idade:</strong> 28 anos</p>
+            <p><strong>Sexo:</strong> Masculino</p>
+            <p><strong>Altura:</strong> 1,75 m</p>
+            <p><strong>Peso:</strong> 78 kg</p>
+          </div>
+          <div>
+            <p><strong>Objetivo Nutricional:</strong> Perda de peso</p>
+            <p><strong>Plano Alimentar:</strong> Dieta low-carb</p>
+            <p><strong>Alergias:</strong> Nenhuma</p>
+            <p><strong>Última Consulta:</strong> 10/10/2023</p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <script>
+    function showPatientDetails(patientId) {
+      // Hide all patient details
+      document.querySelectorAll('.patient-details').forEach(detail => {
+        detail.style.display = 'none';
+      });
+
+      // Show the selected patient's details
+      const details = document.getElementById(`patient-details-${patientId}`);
+      if (details) {
+        details.style.display = 'block';
+      }
+    }
+  </script>
+
+{% endblock %}

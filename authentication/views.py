@@ -1,5 +1,7 @@
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
-from rest_framework import generics, status
+from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -13,7 +15,18 @@ def home(request):
     return render(request, 'authentication/home.html')
 
 
-def login(request):
+def login_create(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, 'Logged in successfully')
+            return redirect('dashboard')
+        else:
+            messages.error(request, 'Invalid credentials')
+            return redirect('login_create')
     return render(request, 'authentication/login.html')
 
 
@@ -23,10 +36,6 @@ def register_nutritionist(request):
 
 def register_customer(request):
     return render(request, 'authentication/customer_registration.html')
-
-
-def dashboard(request):
-    return render(request, 'authentication/dashboard.html')
 
 
 class RegisterNutritionistView(APIView):
@@ -50,8 +59,11 @@ class RegisterNutritionistView(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            return redirect('login')
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            messages.success(request, 'Nutritionist registered successfully')
+            return redirect('login_create')
+
+        messages.error(request, 'Error registering nutritionist')
+        return redirect('register_nutritionist')
 
 
 class RegisterCustomerView(APIView):
@@ -75,5 +87,8 @@ class RegisterCustomerView(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            return redirect('login')
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            messages.success(request, 'Customer registered successfully')
+            return redirect('login_create')
+
+        messages.error(request, 'Error registering customer')
+        return redirect('register_customer')

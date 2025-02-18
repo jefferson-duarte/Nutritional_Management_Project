@@ -22,8 +22,7 @@ urlpatterns = [
 
 urlpatterns += [
     path('', views.home, name='home'),
-    path('login/', views.login, name='login'),
-    path('dashboard/', views.dashboard, name='dashboard'),
+    path('login/create/', views.login_create, name='login_create'),
     path('register/nutritionist/', views.register_nutritionist, name='register_nutritionist'),  # noqa: E501
     path('register/customer/', views.register_customer, name='register_customer'),  # noqa: E501
 ]
