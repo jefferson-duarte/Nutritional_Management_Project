@@ -25,4 +25,5 @@ urlpatterns += [
     path('login/create/', views.login_create, name='login_create'),
     path('register/nutritionist/', views.register_nutritionist, name='register_nutritionist'),  # noqa: E501
     path('register/customer/', views.register_customer, name='register_customer'),  # noqa: E501
+    path('additional-info/', views.additional_info, name='additional_info'),
 ]

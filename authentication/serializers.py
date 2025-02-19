@@ -50,11 +50,6 @@ class NutritionistProfileSerializer(serializers.ModelSerializer):
         model = NutritionistProfile
         fields = ['user', 'registration_number', 'phone']
 
-    def validate_user(self, value):
-        if not value:
-            raise serializers.ValidationError("This field is required.")
-        return value
-
     def create(self, validated_data):
         user_data = validated_data.pop('user')
         user_serializer = UserSerializer(data=user_data)
@@ -72,12 +67,18 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomerProfile
-        fields = ['user', 'phone']
-
-    def validate_user(self, value):
-        if not value:
-            raise serializers.ValidationError("This field is required.")
-        return value
+        fields = [
+            'user',
+            'phone',
+            'age',
+            'gender',
+            'height',
+            'weight',
+            'nutritional_goal',
+            'diet_plan',
+            'allergies',
+            'last_appointment'
+        ]
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')

@@ -1,0 +1,58 @@
+{% extends "global/base.html" %}
+
+{% block title %}Additional Information{% endblock %}
+
+{% block content %}
+  <div class="container mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Additional Information</h1>
+    <form method="post">
+      {% csrf_token %}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label for="id_age">Age:</label>
+          {{ form.age }}
+        </div>
+        <div>
+          <label for="id_gender">Gender:</label>
+          {{ form.gender }}
+        </div>
+        <div>
+          <label for="id_height">Height (m):</label>
+          {{ form.height }}
+        </div>
+        <div>
+          <label for="id_weight">Weight (kg):</label>
+          {{ form.weight }}
+        </div>
+        <div>
+          <label for="id_nutritional_goal">Nutritional Goal:</label>
+          {{ form.nutritional_goal }}
+        </div>
+        <div>
+          <label for="id_diet_plan">Diet Plan:</label>
+          {{ form.diet_plan }}
+        </div>
+        <div>
+          <label for="id_allergies">Allergies:</label>
+          {{ form.allergies }}
+        </div>
+        <div>
+          <label for="id_last_appointment">Last Appointment:</label>
+          {{ form.last_appointment }}
+        </div>
+      </div>
+      <button type="submit" class="bg-blue-500 text-white p-2 rounded-lg mt-4">Save</button>
+      
+      <div class="messages-container">
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert {{message.tags}} mt-3">
+              {{message}}
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+    </form>
+  </div>
+{% endblock %}

@@ -1,5 +1,6 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -7,6 +8,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from .forms import CustomerAdditionalInfoForm
+from .models import CustomerProfile
 from .serializers import (CustomerProfileSerializer,
                           NutritionistProfileSerializer)
 
@@ -23,7 +26,7 @@ def login_create(request):
         if user is not None:
             login(request, user)
             messages.success(request, 'Logged in successfully')
-            return redirect('dashboard')
+            return redirect('additional_info')
         else:
             messages.error(request, 'Invalid credentials')
             return redirect('login_create')
@@ -61,34 +64,53 @@ class RegisterNutritionistView(APIView):
             serializer.save()
             messages.success(request, 'Nutritionist registered successfully')
             return redirect('login_create')
-
-        messages.error(request, 'Error registering nutritionist')
-        return redirect('register_nutritionist')
+        else:
+            for field, errors in serializer.errors.items():
+                for error in errors:
+                    messages.error(
+                        request, f"Erro no campo '{field}': {error}"
+                    )
+            return redirect('register_nutritionist')
 
 
 class RegisterCustomerView(APIView):
     permission_classes = [AllowAny]
-    parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
-        data = request.data.dict()
-
-        user_data = {
-            'first_name': data.pop('user[first_name]'),
-            'last_name': data.pop('user[last_name]'),
-            'username': data.pop('user[username]'),
-            'email': data.pop('user[email]'),
-            'password': data.pop('user[password]'),
-            'confirm_password': data.pop('user[confirm_password]'),
-        }
-        data['user'] = user_data
-
-        serializer = CustomerProfileSerializer(data=data)
+        serializer = CustomerProfileSerializer(data=request.data)
 
         if serializer.is_valid():
             serializer.save()
-            messages.success(request, 'Customer registered successfully')
-            return redirect('login_create')
+            return Response({'success': 'Customer registered successfully'}, status=status.HTTP_201_CREATED)  # noqa:E501
 
-        messages.error(request, 'Error registering customer')
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@login_required
+def additional_info(request):
+    try:
+        customer_profile = CustomerProfile.objects.get(user=request.user)
+    except CustomerProfile.DoesNotExist:
         return redirect('register_customer')
+
+    if customer_profile.profile_complete:
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        form = CustomerAdditionalInfoForm(
+            request.POST,
+            instance=customer_profile
+        )
+        if form.is_valid():
+            form.save()
+            customer_profile.profile_complete = True
+            customer_profile.save()
+            return redirect('dashboard')
+    else:
+        form = CustomerAdditionalInfoForm(instance=customer_profile)
+
+    return render(
+        request,
+        'authentication/additional_info.html',
+        {'form': form}
+    )

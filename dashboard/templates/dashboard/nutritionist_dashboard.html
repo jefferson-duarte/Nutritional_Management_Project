@@ -41,7 +41,7 @@
       <div id="patient-details-{{customer.user.id}}" class="patient-details bg-white p-6 rounded-lg shadow mb-6" style="display: none;">
         <h2 class="text-xl font-semibold mb-4">Full Profile - {{customer.user.first_name}} {{customer.user.last_name}}</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {% comment %} <div>
+          <div>
             <p><strong>Age:</strong> {{customer.age}} years</p>
             <p><strong>Gender:</strong> {{customer.gender}}</p>
             <p><strong>Height:</strong> {{customer.height}} m</p>
@@ -52,18 +52,6 @@
             <p><strong>Diet Plan:</strong> {{customer.diet_plan}}</p>
             <p><strong>Allergies:</strong> {{customer.allergies}}</p>
             <p><strong>Last Appointment:</strong> {{customer.last_appointment|date:"d/m/Y"}}</p>
-          </div> {% endcomment %}
-          <div>
-            <p><strong>Idade:</strong> 28 anos</p>
-            <p><strong>Sexo:</strong> Masculino</p>
-            <p><strong>Altura:</strong> 1,75 m</p>
-            <p><strong>Peso:</strong> 78 kg</p>
-          </div>
-          <div>
-            <p><strong>Objetivo Nutricional:</strong> Perda de peso</p>
-            <p><strong>Plano Alimentar:</strong> Dieta low-carb</p>
-            <p><strong>Alergias:</strong> Nenhuma</p>
-            <p><strong>Última Consulta:</strong> 10/10/2023</p>
           </div>
         </div>
       </div>

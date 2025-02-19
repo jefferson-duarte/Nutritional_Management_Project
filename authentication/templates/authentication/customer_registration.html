@@ -5,48 +5,162 @@
 {% block content %}
 <div class="container my-5">
     <div class="card shadow-lg p-4 rounded-4">
-        <form class="registration-form" action="{% url 'register_customer_api' %}" method="POST">
+        <!-- Customer registration form -->
+        <form class="registration-form" id="registration-form" action="{% url 'register_customer_api' %}" method="POST">
             <h2 class="text-center mb-4">Customer Registration</h2>
+            <!-- CSRF token for security -->
             {% csrf_token %}
 
             <div class="row g-4">
+                <!-- Input field for first name -->
                 <div class="col-md-6">
                     <label for="first_name" class="form-label">First Name</label>
                     <input type="text" id="first_name" name="user[first_name]" class="form-control form-control-lg" placeholder="Enter your first name" required>
                 </div>
+
+                <!-- Input field for last name -->
                 <div class="col-md-6">
                     <label for="last_name" class="form-label">Last Name</label>
                     <input type="text" id="last_name" name="user[last_name]" class="form-control form-control-lg" placeholder="Enter your last name" required>
                 </div>
 
+                <!-- Input field for email address -->
                 <div class="col-12">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" id="email" name="user[email]" class="form-control form-control-lg" placeholder="Enter your email address" required>
                 </div>
 
+                <!-- Input field for username -->
                 <div class="col-md-6">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" id="username" name="user[username]" class="form-control form-control-lg" placeholder="Enter your username" required>
                 </div>
+
+                <!-- Input field for phone number -->
                 <div class="col-md-6">
                     <label for="phone" class="form-label">Phone</label>
                     <input type="text" id="phone" name="phone" class="form-control form-control-lg" placeholder="Enter your phone number" required>
                 </div>
 
+                <!-- Input field for password -->
                 <div class="col-md-6">
                     <label for="password" class="form-label">Password</label>
                     <input type="password" id="password" name="user[password]" class="form-control form-control-lg" placeholder="Enter your password" required>
                 </div>
+
+                <!-- Input field for confirming password -->
                 <div class="col-md-6">
                     <label for="confirm_password" class="form-label">Confirm Password</label>
                     <input type="password" id="confirm_password" name="user[confirm_password]" class="form-control form-control-lg" placeholder="Confirm your password" required>
                 </div>
             </div>
 
+            <!-- Submit button -->
             <div class="text-center mt-4">
                 <button type="submit" class="btn btn-primary px-5 py-2">Register</button>
+            </div>
+
+            <!-- Container to display error or success messages -->
+            <div class="messages-container mt-3">
+                <!-- Error or success messages will appear here -->
             </div>
         </form>
     </div>
 </div>
+
+<script>
+
+    // Event listener for the form submission
+    document.getElementById('registration-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const form = event.target;
+        const formData = new FormData(form);
+        const messagesContainer = document.querySelector('.messages-container');
+        
+        // Create the JSON object with form data
+        let jsonObject = {
+            user: {
+                first_name: formData.get("user[first_name]"),
+                last_name: formData.get("user[last_name]"),
+                username: formData.get("user[username]"),
+                email: formData.get("user[email]"),
+                password: formData.get("user[password]"),
+                confirm_password: formData.get("user[confirm_password]")
+            },
+            phone: formData.get("phone")
+        };
+    
+        // Clear previous messages
+        messagesContainer.innerHTML = '';
+    
+        // Send POST request to the backend
+        fetch("{% url 'register_customer_api' %}", {
+            method: 'POST',
+            body: JSON.stringify(jsonObject),
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}', // CSRF token for security
+            },
+        })
+        .then(response => {
+            return response.json().then(data => ({
+                status: response.status,
+                body: data
+            }));
+        })
+        .then(({ status, body }) => {
+            // Handle the response depending on the status code
+            if (status >= 400) {
+                // If there are validation errors, display them
+                let errorsHtml = '';
+                
+                // Check if the response body contains errors for the 'user' object
+                if (body.user) {
+                    for (const field in body.user) {
+                        if (Array.isArray(body.user[field])) {
+                            // Display errors as an array (for example, username)
+                            errorsHtml += `<div class="alert alert-danger">${body.user[field].join('<br>')}</div>`;
+                        } else {
+                            // Display errors as a string
+                            errorsHtml += `<div class="alert alert-danger">${body.user[field]}</div>`;
+                        }
+                    }
+                }
+    
+                // Check if there are errors related to the 'phone' field
+                if (body.phone) {
+                    errorsHtml += `<div class="alert alert-danger"><strong>Phone:</strong> ${body.phone}</div>`;
+                }
+    
+                // Display the error messages
+                messagesContainer.innerHTML = errorsHtml;
+            } else {
+                // If registration is successful, display a success message
+                messagesContainer.innerHTML = `<div class="alert alert-success">${body.success}</div>`;
+                setTimeout(() => {
+                    // Redirect to the login page after 2 seconds
+                    window.location.href = "{% url 'login_create' %}";
+                }, 2000);
+            }
+        })
+        .catch(errorData => {
+            console.log('Error Response:', errorData); // Debugging the error response
+            let errorsHtml = '';
+            // Display the errors in case of failure
+            if (errorData.user) {
+                for (const field in errorData.user) {
+                    if (Array.isArray(errorData.user[field])) {
+                        errorsHtml += `<div class="alert alert-danger">${errorData.user[field].join('<br>')}</div>`;
+                    } else {
+                        errorsHtml += `<div class="alert alert-danger">${errorData.user[field]}</div>`;
+                    }
+                }
+            }
+            // Display the error messages
+            messagesContainer.innerHTML = errorsHtml;
+        });
+    }); 
+
+</script>
 {% endblock content %}
