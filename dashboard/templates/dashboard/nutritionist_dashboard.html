@@ -24,7 +24,11 @@
         {% for customer in customers %}
           <div class="flex items-center justify-between p-4 border-b cursor-pointer" onclick="showPatientDetails('{{customer.user.id}}')">
             <div class="flex items-center gap-4">
-              <img src="https://via.placeholder.com/50" alt="{{customer.user.first_name}} {{customer.user.last_name}}">
+              {% if customer.image %}
+                <img src={{customer.image.url}} alt="{{customer.user.first_name}} {{customer.user.last_name}}">
+              {% else %}
+                <div class="w-12 h-12 bg-gray-200 rounded-full"></div>
+              {% endif %}
               <div>
                 <p class="font-semibold">{{customer.user.first_name}} {{customer.user.last_name}}</p>
                 <p class="text-lg text-gray-600">Active</p>
@@ -49,9 +53,9 @@
           </div>
           <div>
             <p><strong>Nutritional Goal:</strong> {{customer.nutritional_goal}}</p>
-            <p><strong>Diet Plan:</strong> {{customer.diet_plan}}</p>
+            {% comment %} <p><strong>Diet Plan:</strong> {{customer.diet_plan}}</p> {% endcomment %}
             <p><strong>Allergies:</strong> {{customer.allergies}}</p>
-            <p><strong>Last Appointment:</strong> {{customer.last_appointment|date:"d/m/Y"}}</p>
+            {% comment %} <p><strong>Last Appointment:</strong> {{customer.last_appointment|date:"d/m/Y"}}</p> {% endcomment %}
           </div>
         </div>
       </div>

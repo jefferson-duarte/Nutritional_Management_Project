@@ -34,6 +34,7 @@ class CustomerProfile(models.Model):
     diet_plan = models.CharField(max_length=100, null=True, blank=True)
     allergies = models.CharField(max_length=200, null=True, blank=True)
     last_appointment = models.DateField(null=True, blank=True)
+    image = models.ImageField(upload_to='profile_images/', null=True, blank=True)  # noqa:E501
     profile_complete = models.BooleanField(default=False)
 
     def __str__(self):

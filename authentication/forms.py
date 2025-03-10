@@ -14,5 +14,6 @@ class CustomerAdditionalInfoForm(forms.ModelForm):
             'nutritional_goal',
             'diet_plan',
             'allergies',
-            'last_appointment'
+            'last_appointment',
+            'image',
         ]

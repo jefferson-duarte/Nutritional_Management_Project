@@ -5,7 +5,7 @@
 {% block content %}
   <div class="container mx-auto">
     <h1 class="text-3xl font-bold mb-6">Additional Information</h1>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -29,16 +29,12 @@
           {{ form.nutritional_goal }}
         </div>
         <div>
-          <label for="id_diet_plan">Diet Plan:</label>
-          {{ form.diet_plan }}
-        </div>
-        <div>
           <label for="id_allergies">Allergies:</label>
           {{ form.allergies }}
         </div>
         <div>
-          <label for="id_last_appointment">Last Appointment:</label>
-          {{ form.last_appointment }}
+          <label for="id_image">Profile Photo:</label>
+          {{ form.image }}
         </div>
       </div>
       <button type="submit" class="bg-blue-500 text-white p-2 rounded-lg mt-4">Save</button>

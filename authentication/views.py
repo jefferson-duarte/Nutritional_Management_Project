@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .forms import CustomerAdditionalInfoForm
-from .models import CustomerProfile
+from .models import CustomerProfile, NutritionistProfile
 from .serializers import (CustomerProfileSerializer,
                           NutritionistProfileSerializer)
 
@@ -41,20 +41,56 @@ def register_customer(request):
     return render(request, 'authentication/customer_registration.html')
 
 
+# class RegisterNutritionistView(APIView):
+#     permission_classes = [AllowAny]
+#     parser_classes = (MultiPartParser, FormParser)
+
+#     def post(self, request):
+#         data = request.data.dict()
+
+#         user_data = {
+#             'first_name': data.pop('user[first_name]'),
+#             'last_name': data.pop('user[last_name]'),
+#             'username': data.pop('user[username]'),
+#             'email': data.pop('user[email]'),
+#             'password': data.pop('user[password]'),
+#             'confirm_password': data.pop('user[confirm_password]'),
+#         }
+#         data['user'] = user_data
+
+#         serializer = NutritionistProfileSerializer(data=data)
+
+#         if serializer.is_valid():
+#             serializer.save()
+#             messages.success(request, 'Nutritionist registered successfully')
+#             return redirect('login_create')
+#         else:
+#             for field, errors in serializer.errors.items():
+#                 for error in errors:
+#                     messages.error(
+#                         request, f"Erro no campo '{field}': {error}"
+#                     )
+#             return redirect('register_nutritionist')
+
+
 class RegisterNutritionistView(APIView):
     permission_classes = [AllowAny]
     parser_classes = (MultiPartParser, FormParser)
+
+    def get(self, request):
+        serializer = NutritionistProfileSerializer()
+        return render(request, 'authentication/nutritionist_registration.html', {'form': serializer})  # noqa:E501
 
     def post(self, request):
         data = request.data.dict()
 
         user_data = {
-            'first_name': data.pop('user[first_name]'),
-            'last_name': data.pop('user[last_name]'),
-            'username': data.pop('user[username]'),
-            'email': data.pop('user[email]'),
-            'password': data.pop('user[password]'),
-            'confirm_password': data.pop('user[confirm_password]'),
+            'first_name': data.pop('user[first_name]', ''),
+            'last_name': data.pop('user[last_name]', ''),
+            'username': data.pop('user[username]', ''),
+            'email': data.pop('user[email]', ''),
+            'password': data.pop('user[password]', ''),
+            'confirm_password': data.pop('user[confirm_password]', ''),
         }
         data['user'] = user_data
 
@@ -70,7 +106,7 @@ class RegisterNutritionistView(APIView):
                     messages.error(
                         request, f"Erro no campo '{field}': {error}"
                     )
-            return redirect('register_nutritionist')
+            return render(request, 'authentication/nutritionist_registration.html', {'form': serializer})  # noqa:E501
 
 
 class RegisterCustomerView(APIView):
@@ -88,6 +124,11 @@ class RegisterCustomerView(APIView):
 
 @login_required
 def additional_info(request):
+    nutritionist_profile = NutritionistProfile.objects.filter(user=request.user)  # noqa:E501
+
+    if nutritionist_profile.exists():
+        return redirect('dashboard')
+
     try:
         customer_profile = CustomerProfile.objects.get(user=request.user)
     except CustomerProfile.DoesNotExist:
@@ -99,6 +140,7 @@ def additional_info(request):
     if request.method == 'POST':
         form = CustomerAdditionalInfoForm(
             request.POST,
+            request.FILES,
             instance=customer_profile
         )
         if form.is_valid():
