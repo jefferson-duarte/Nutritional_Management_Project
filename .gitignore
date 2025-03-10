@@ -173,3 +173,4 @@ cython_debug/
 # static files collected by Django
 /staticfiles/
 media/
+.vscode/
