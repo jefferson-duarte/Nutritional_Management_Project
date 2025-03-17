@@ -8,3 +8,32 @@
 .patient-details {
   display: none;
 }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.pagination a {
+  padding: 8px 12px;
+  background-color: #e5e7eb;
+  color: #374151;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.pagination a:hover {
+  background-color: #d1d5db;
+}
+
+.pagination .active {
+  background-color: #3b82f6;
+  color: white;
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 6px;
+}

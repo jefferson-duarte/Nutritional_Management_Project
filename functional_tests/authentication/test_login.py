@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -14,9 +15,21 @@ class NutritionistRegistrationFunctionalTest(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        # Set up the WebDriver
-        cls.browser = webdriver.Chrome()
-        # Implicit wait of 10 seconds for elements to load
+        # Chrome configuration to run in headless mode
+        chrome_options = Options()
+        # Run without opening the browser
+        chrome_options.add_argument("--headless")
+        # Better compatibility
+        chrome_options.add_argument("--disable-gpu")
+        # Set a fixed window size
+        chrome_options.add_argument("--window-size=1920x1080")
+        # Recommended to avoid permission issues
+        chrome_options.add_argument("--no-sandbox")
+        # Prevent excessive memory usage
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        # Start the browser with the defined options
+        cls.browser = webdriver.Chrome(options=chrome_options)
+        # Implicit wait for elements to load
         cls.browser.implicitly_wait(10)
 
     @classmethod

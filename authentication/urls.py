@@ -19,7 +19,7 @@ urlpatterns = [
         name='register_customer_api'
     ),
     path(
-        'update_customer/<int:customer_id>/',
+        'api/update_customer/<int:customer_id>/',
         api.UpdateCustomerView.as_view(),
         name='update_customer_api'
     ),

@@ -5,36 +5,56 @@
 {% block content %}
 
   <div class="container mx-auto">
-    <h1 class="text-3xl font-bold mb-6 text-center">Nutritionist Dashboard</h1>
+    <h1 class="text-3xl font-bold mb-6 text-center">Nutritionist Dashboard: {{nutri_profile}}</h1>
 
     <!-- Patients List -->
     <div class="bg-white p-6 rounded-lg shadow mb-6">
       <h2 class="text-xl font-semibold mb-4">Patients List</h2>
       <div class="patient-list">
-        {% for customer in customers %}
-          <div class="flex items-center justify-between p-4 border-b cursor-pointer" onclick="showPatientDetails('{{customer.user.id}}')">
-            <div class="flex items-center gap-4">
-              {% if customer.image %}
-                <img src={{customer.image.url}} alt="{{customer.user.first_name}} {{customer.user.last_name}}">
-              {% else %}
-                <div class="w-12 h-12 bg-gray-200 rounded-full"></div>
-              {% endif %}
-              <div>
-                <p class="font-semibold">{{customer.user.first_name}} {{customer.user.last_name}}</p>
-                <p class="text-lg text-gray-600">Active</p>
+        {% if customers %}
+          {% for customer in customers %}
+            <div class="flex items-center justify-between p-4 border-b cursor-pointer" onclick="showPatientDetails('{{customer.user.id}}')">
+              <div class="flex items-center gap-4">
+                {% if customer.image %}
+                  <img src={{customer.image.url}} alt="{{customer.user.first_name}} {{customer.user.last_name}}">
+                {% else %}
+                  <div class="w-12 h-12 bg-gray-200 rounded-full"></div>
+                {% endif %}
+                <div>
+                  <p class="font-semibold">{{customer.user.first_name}} {{customer.user.last_name}}</p>
+                  <p class="text-lg text-gray-600">Active</p>
+                </div>
+              </div>
+              <div class="p-2">
+                <button class="bg-blue-500 text-white px-3 py-2 rounded-lg">
+                  <a href="{% url 'update_customer' customer.id %}" class="text-white-500 hover:text-white-700">Edit</a>
+                </button>
+                <p class="text-lg text-gray-600">Last appointment: </p>
+                <p>{{customer.last_appointment|date:"d/m/Y"}}</p>
               </div>
             </div>
-            <div class="p-2">
-              <button class="bg-blue-500 text-white px-3 py-2 rounded-lg">
-                <a href="{% url 'update_customer' customer.id %}" class="text-white-500 hover:text-white-700">Edit</a>
-              </button>
-              <p class="text-lg text-gray-600">Last appointment: {{customer.last_appointment|date:"d/m/Y"}}</p>
-            </div>
-            
+          {% endfor %}
+        
+        <!-- Pagination -->
+        <div class="pagination">
+          {% if customers.has_previous %}
+              <a href="?page=1">First</a>
+              <a href="?page={{ customers.previous_page_number }}">Previous</a>
+          {% endif %}
+
+          <span>Page {{ customers.number }} of {{ customers.paginator.num_pages }}</span>
+
+          {% if customers.has_next %}
+              <a href="?page={{ customers.next_page_number }}">Next</a>
+              <a href="?page={{ customers.paginator.num_pages }}">Last</a>
+          {% endif %}
           </div>
-        {% endfor %}
+        {% else %}
+          <p>No patients to list</p>
+        {% endif %}
       </div>
       
+      <!-- Messages -->
       <div class="messages-container">
         {% if messages %}
           {% for message in messages %}
