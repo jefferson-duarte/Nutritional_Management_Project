@@ -7,16 +7,6 @@
   <div class="container mx-auto">
     <h1 class="text-3xl font-bold mb-6 text-center">Nutritionist Dashboard</h1>
 
-    <div class="messages-container">
-      {% if messages %}
-        {% for message in messages %}
-          <div class="alert {{message.tags}} mt-3">
-            {{message}}
-          </div>
-        {% endfor %}
-      {% endif %}
-    </div>
-
     <!-- Patients List -->
     <div class="bg-white p-6 rounded-lg shadow mb-6">
       <h2 class="text-xl font-semibold mb-4">Patients List</h2>
@@ -34,9 +24,25 @@
                 <p class="text-lg text-gray-600">Active</p>
               </div>
             </div>
-            <p class="text-lg text-gray-600">Last appointment: {{customer.last_appointment|date:"d/m/Y"}}</p>
+            <div class="p-2">
+              <button class="bg-blue-500 text-white px-3 py-2 rounded-lg">
+                <a href="{% url 'update_customer' customer.id %}" class="text-white-500 hover:text-white-700">Edit</a>
+              </button>
+              <p class="text-lg text-gray-600">Last appointment: {{customer.last_appointment|date:"d/m/Y"}}</p>
+            </div>
+            
           </div>
         {% endfor %}
+      </div>
+      
+      <div class="messages-container">
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert {{message.tags}} mt-3">
+              {{message}}
+            </div>
+          {% endfor %}
+        {% endif %}
       </div>
     </div>
 

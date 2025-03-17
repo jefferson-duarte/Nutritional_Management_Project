@@ -89,3 +89,12 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
                 user=user, **validated_data
             )
             return customer_profile
+
+
+class CustomerProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomerProfile
+        fields = [
+            'phone', 'age', 'gender', 'height', 'weight',
+            'nutritional_goal', 'diet_plan', 'allergies', 'last_appointment'
+        ]

@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
 
-from . import views
+from .views import api, site
 
 urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # noqa: E501
@@ -10,20 +10,26 @@ urlpatterns = [
 
     path(
         'api/register/nutritionist/',
-        views.RegisterNutritionistView.as_view(),
+        api.RegisterNutritionistView.as_view(),
         name='register_nutritionist_api'
     ),
     path(
         'api/register/customer/',
-        views.RegisterCustomerView.as_view(),
+        api.RegisterCustomerView.as_view(),
         name='register_customer_api'
+    ),
+    path(
+        'update_customer/<int:customer_id>/',
+        api.UpdateCustomerView.as_view(),
+        name='update_customer_api'
     ),
 ]
 
 urlpatterns += [
-    path('', views.home, name='home'),
-    path('login/create/', views.login_create, name='login_create'),
-    path('register/nutritionist/', views.register_nutritionist, name='register_nutritionist'),  # noqa: E501
-    path('register/customer/', views.register_customer, name='register_customer'),  # noqa: E501
-    path('additional-info/', views.additional_info, name='additional_info'),
+    path('', site.home, name='home'),
+    path('login/create/', site.login_create, name='login_create'),
+    path('register/nutritionist/', site.register_nutritionist, name='register_nutritionist'),  # noqa: E501
+    path('register/customer/', site.register_customer, name='register_customer'),  # noqa: E501
+    path('update/customer/<int:customer_id>/', site.CustomerUpdateView.as_view(), name='update_customer'),  # noqa: E501
+    path('additional-info/', site.additional_info, name='additional_info'),
 ]
