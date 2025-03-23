@@ -10,7 +10,7 @@
   <div class="mt-3">
     <a href="{% url 'plan_edit' plan.pk %}" class="btn btn-warning">Edit</a>
     <a href="{% url 'plan_delete' plan.pk %}" class="btn btn-danger">Delete</a>
-    <a href="{% url 'plan_list' %}" class="btn btn-secondary">Back</a>
+    <a href="{% url 'plan_list' customer.id %}" class="btn btn-secondary">Back</a>
   </div>
 </div>
 {% endblock %}

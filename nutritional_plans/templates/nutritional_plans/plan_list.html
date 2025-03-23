@@ -4,9 +4,9 @@
 
 {% block content %}
 <div class="container mt-4">
-  <h1 class="mb-4 text-primary">Nutritional Plans</h1>
+  <h1 class="mb-4 text-primary">Nutritional Plans - {{customer.user.first_name}} {{customer.user.last_name}}</h1>
   
-  <a href="{% url 'plan_create' plans.first.pk %}" class="btn btn-primary mb-3">
+  <a href="{% url 'plan_create' customer.id %}" class="btn btn-primary mb-3">
     Create New Plan
   </a>
   
