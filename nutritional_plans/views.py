@@ -1,5 +1,8 @@
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
+
+from authentication.models import CustomerProfile
 
 from .forms import NutritionalPlanForm
 from .models import NutritionalPlan
@@ -12,17 +15,35 @@ def nutritional_plan_list(request):
 
 
 @login_required
-def nutritional_plan_create(request):
+def nutritional_plan_create(request, customer_id=None):
+    customer = None
+
+    if customer_id:
+        customer = get_object_or_404(CustomerProfile, id=customer_id)
+
+        if customer.nutritionist and customer.nutritionist.user != request.user:  # noqa:E501
+            return HttpResponseForbidden("You are not authorized to prescribe for this client.")  # noqa:E501
+
     if request.method == 'POST':
         form = NutritionalPlanForm(request.POST)
         if form.is_valid():
             plan = form.save(commit=False)
             plan.nutritionist = request.user
+            if customer:
+                plan.customer = customer.user
             plan.save()
             return redirect('plan_list')
     else:
         form = NutritionalPlanForm()
-    return render(request, 'nutritional_plans/plan_form.html', {'form': form})
+        if customer:
+            form.fields['client'].initial = customer.user
+
+    context = {
+        'form': form,
+        'customer': customer
+    }
+
+    return render(request, 'nutritional_plans/plan_form.html', context)
 
 
 @login_required

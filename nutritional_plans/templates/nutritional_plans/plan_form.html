@@ -3,18 +3,19 @@
 {% block title %}Nutritional Plan{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h1 class="mb-4 text-primary">
-    {% if form.instance.pk %}Edit{% else %}Create{% endif %} Nutritional Plan
-  </h1>
+  <div class="container mt-4">
+    <h1 class="mb-4 text-primary">
+      {% if form.instance.pk %}Edit{% else %}Create{% endif %} Nutritional Plan
+    </h1>
+    {% if customer %}
+      <p><strong>Client:</strong> {{ customer.user.first_name }} {{ customer.user.last_name }}</p>
+    {% endif %}
 
-  <form method="post">
-    {% csrf_token %}
-    <div class="mb-3">
+    <form method="POST">
+      {% csrf_token %}
       {{ form.as_p }}
-    </div>
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a href="{% url 'plan_list' %}" class="btn btn-secondary">Cancel</a>
-  </form>
-</div>
+
+      <button type="submit" class="btn btn-primary">Save Plan</button>
+    </form>
+  </div>
 {% endblock %}
