@@ -1,0 +1,21 @@
+{% extends 'global/base.html' %}
+
+{% block title %}Nutritional Plans{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4 text-primary">Nutritional Plans</h1>
+  <a href="{% url 'plan_create' %}" class="btn btn-primary mb-3">Create New Plan</a>
+
+  <div class="list-group">
+    {% for plan in plans %}
+      <a href="{% url 'plan_detail' plan.pk %}" class="list-group-item list-group-item-action">
+        <h5 class="mb-1">{{ plan.title }}</h5>
+        <p class="mb-1 text-muted">{{ plan.description }}</p>
+      </a>
+    {% empty %}
+      <p class="text-muted">No nutritional plans found.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

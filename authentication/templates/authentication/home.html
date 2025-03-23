@@ -1,8 +1,64 @@
 {% extends "global/base.html" %}
 
-{% block title %}Home{% endblock title %}
+{% block title %}NutriManager - Nutritional Management{% endblock %}
 
 {% block content %}
-  <h1>Welcome to Nutritional</h1>
-  <p>Track your daily nutrition intake and stay healthy!</p>
-{% endblock content %}
+<!-- Header -->
+<header class="bg-gradient-to-r from-blue-500 to-blue-700 text-white py-20">
+    <div class="container mx-auto text-center">
+        <h1 class="text-5xl font-bold mb-4">Nutritional Management</h1>
+        <p class="text-xl mb-8">Connect with your patients and manage meal plans efficiently.</p>
+        <p class="text-xl mb-8">Sign Up</p>
+        <a href="{% url 'register_nutritionist' %}" class="bg-white text-blue-700 px-8 py-3 rounded-full font-semibold hover:bg-blue-100 transition duration-300">As a Nutritionist</a>
+        <a href="{% url 'register_customer' %}" class="bg-white text-blue-700 px-8 py-3 rounded-full font-semibold hover:bg-blue-100 transition duration-300">As a Client</a>
+    </div>
+</header>
+
+<!-- About the Project -->
+<section id="about" class="py-16">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-8">About NutriManager</h2>
+        <p class="text-lg text-center text-gray-700 max-w-2xl mx-auto">
+            NutriManager is an innovative platform that connects nutritionists and patients, facilitating nutritional monitoring and meal plan management.
+        </p>
+    </div>
+</section>
+
+<!-- Features -->
+<section id="features" class="bg-gray-50 py-16">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-8">Features</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <h3 class="text-xl font-bold mb-4">Patient Management</h3>
+                <p class="text-gray-700">Register and monitor your patients in a simple and organized way.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <h3 class="text-xl font-bold mb-4">Meal Plans</h3>
+                <p class="text-gray-700">Create and customize meal plans for each patient.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <h3 class="text-xl font-bold mb-4">Real-Time Monitoring</h3>
+                <p class="text-gray-700">Monitor patient progress with charts and reports.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section id="testimonials" class="py-16">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-8">Testimonials</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="text-gray-700 italic">"NutriManager has revolutionized the way I work. Now I can manage my patients much more efficiently!"</p>
+                <p class="text-right font-semibold mt-4">- Dr. Ana Silva</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <p class="text-gray-700 italic">"The platform is amazing! My nutritionist can easily track my progress and adjust my meal plan."</p>
+                <p class="text-right font-semibold mt-4">- João Oliveira</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

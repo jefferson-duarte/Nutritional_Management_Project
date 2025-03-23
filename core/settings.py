@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 MY_APPS = [
     'authentication',
     'dashboard',
+    'nutritional_plans',
 ]
 
 THIRTY_PART_APPS = [
