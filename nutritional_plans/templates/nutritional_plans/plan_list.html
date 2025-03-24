@@ -4,12 +4,19 @@
 
 {% block content %}
 <div class="container mt-4">
-  <h1 class="mb-4 text-primary">Nutritional Plans - {{customer.user.first_name}} {{customer.user.last_name}}</h1>
+  <h1 class="mb-4 text-primary">Nutritional Plans - {{ customer.user.first_name }} {{ customer.user.last_name }}</h1>
   
-  <a href="{% url 'plan_create' customer.id %}" class="btn btn-primary mb-3">
-    Create New Plan
-  </a>
-  
+  <!-- Messages -->
+  <div class="messages-container">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert {{message.tags}} mt-3">
+          {{message}}
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
   <div class="list-group">
     {% for plan in plans %}
       <a href="{% url 'plan_detail' plan.pk %}" class="list-group-item list-group-item-action">
@@ -23,5 +30,9 @@
       <p class="text-muted">No nutritional plans found.</p>
     {% endfor %}
   </div>
+
+  <a href="{% url 'plan_create' customer.id %}" class="btn btn-primary mb-3">
+    Create New Plan
+  </a>
 </div>
 {% endblock %}

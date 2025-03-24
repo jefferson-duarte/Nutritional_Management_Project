@@ -40,6 +40,8 @@ def nutritional_plan_create(request, customer_id=None):
             if customer:
                 plan.client = customer.user
             plan.save()
+
+            messages.success(request, 'Nutritional plan created successfully.')
             return redirect('plan_list', customer.id)
     else:
         form = NutritionalPlanForm()
@@ -69,6 +71,7 @@ def nutritional_plan_edit(request, pk):
         form = NutritionalPlanForm(request.POST, instance=plan)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Nutritional plan updated successfully.')
             return redirect('plan_list', customer_id=customer_id)
 
     else:
@@ -89,7 +92,7 @@ def nutritional_plan_detail(request, pk):
 
     context = {
         'plan': plan,
-        'customer': customer  # Passa o customer para o template
+        'customer': customer
     }
 
     return render(request, 'nutritional_plans/plan_detail.html', context)
@@ -108,6 +111,8 @@ def nutritional_plan_delete(request, pk):
 
     if request.method == 'POST':
         plan.delete()
+
+        messages.success(request, 'Nutritional plan deleted successfully.')
         return redirect('plan_list', customer_id=customer_id)
 
     return render(request, 'nutritional_plans/plan_confirm_delete.html', {'plan': plan})  # noqa:E501

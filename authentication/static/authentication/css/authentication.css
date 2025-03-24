@@ -52,17 +52,12 @@
   display: block;
   width: 100%;
   padding: 12px; /* Increased padding for a more prominent button */
-  background: #007BFF;
   color: white;
   border: none;
   border-radius: 4px;
   font-size: 1.1rem; /* Slightly larger font size for better visibility */
   cursor: pointer;
   margin-top: 15px;
-}
-
-.btn:hover {
-  background: #0056b3;
 }
 
 .error-message {
