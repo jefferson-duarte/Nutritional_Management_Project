@@ -115,4 +115,8 @@ def nutritional_plan_delete(request, pk):
         messages.success(request, 'Nutritional plan deleted successfully.')
         return redirect('plan_list', customer_id=customer_id)
 
-    return render(request, 'nutritional_plans/plan_confirm_delete.html', {'plan': plan})  # noqa:E501
+    context = {
+        'plan': plan,
+        'customer': customer_id
+    }
+    return render(request, 'nutritional_plans/plan_confirm_delete.html', context)  # noqa:E501

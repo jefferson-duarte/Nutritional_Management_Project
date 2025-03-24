@@ -3,6 +3,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import redirect, render
 
 from authentication.models import CustomerProfile, NutritionistProfile
+from nutritional_plans.models import NutritionalPlan
 
 
 def dashboard(request):
@@ -35,12 +36,21 @@ def dashboard(request):
         customer_profile = CustomerProfile.objects.filter(
             user=request.user
         ).first()
+
         if customer_profile:
             nutritionist = customer_profile.nutritionist
+
+            nutritional_plans = NutritionalPlan.objects.filter(
+                client=request.user
+            )
+
             return render(
                 request,
                 'dashboard/customer_dashboard.html',
-                {'nutritionist': nutritionist}
+                {
+                    'nutritionist': nutritionist,
+                    'nutritional_plans': nutritional_plans
+                }
             )
 
     messages.error(request, 'You are not authorized to access this page')

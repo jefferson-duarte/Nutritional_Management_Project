@@ -4,9 +4,8 @@
 
 {% block content %}
 <div class="container mx-auto">
-    <h1 class="text-3xl font-bold mb-6 text-center">Customer Dashboard</h1>
+    <h1 class="text-primary text-3xl font-bold mb-6 text-center">Welcome, {{ request.user.first_name }} {{ request.user.last_name }}!</h1>
 
-    <!-- Informações do Nutricionista Associado -->
     <div class="bg-white p-6 rounded-lg shadow mb-6">
         <h2 class="text-xl font-semibold mb-4">Your Nutritionist</h2>
         {% if nutritionist %}
@@ -24,7 +23,23 @@
         {% endif %}
     </div>
 
-    <!-- Outras Informações do Cliente -->
+    <div class="bg-white p-6 rounded-lg shadow mb-6">
+        <h2 class="text-xl font-semibold mb-4">Your Nutritional Plans</h2>
+        
+        {% if nutritional_plans %}
+            <div class="list-group">
+            {% for plan in nutritional_plans %}
+                <a href="{% url 'plan_detail' plan.pk %}" class="list-group-item list-group-item-action">
+                <h5 class="mb-1">{{ plan.title }}</h5>
+                <p class="mb-1 text-muted">{{ plan.description }}</p>
+                </a>
+            {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted">You have no nutritional plans assigned yet.</p>
+        {% endif %}
+    </div>
+
     <div class="bg-white p-6 rounded-lg shadow mb-6">
         <h2 class="text-xl font-semibold mb-4">Your Information</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
