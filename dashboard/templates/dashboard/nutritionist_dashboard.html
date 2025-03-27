@@ -45,25 +45,26 @@
             </div>
           {% endfor %}
         
-        <!-- Pagination -->
-        <div class="pagination">
-          {% if customers.has_previous %}
-              <a href="?page=1">First</a>
-              <a href="?page={{ customers.previous_page_number }}">Previous</a>
-          {% endif %}
+          <!-- Pagination -->
+          <div class="pagination">
+            {% if customers.has_previous %}
+              <a href="?page=1" class="page-link">« First</a>
+              <a href="?page={{ customers.previous_page_number }}" class="page-link">‹ Previous</a>
+            {% endif %}
 
-          <span>Page {{ customers.number }} of {{ customers.paginator.num_pages }}</span>
+            <span class="page-info">
+              Page <strong>{{ customers.number }}</strong> of <strong>{{ customers.paginator.num_pages }}</strong>
+            </span>
 
-          {% if customers.has_next %}
-              <a href="?page={{ customers.next_page_number }}">Next</a>
-              <a href="?page={{ customers.paginator.num_pages }}">Last</a>
-          {% endif %}
+            {% if customers.has_next %}
+              <a href="?page={{ customers.next_page_number }}" class="page-link">Next ›</a>
+              <a href="?page={{ customers.paginator.num_pages }}" class="page-link">Last »</a>
+            {% endif %}
           </div>
         {% else %}
-          <p>No patients to list</p>
+          <p class="no-data">No patients to list</p>
         {% endif %}
-      </div>
-      
+
       <!-- Messages -->
       <div class="messages-container">
         {% if messages %}
