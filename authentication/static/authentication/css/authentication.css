@@ -73,3 +73,58 @@
     width: 90%; /* Make form width responsive on smaller screens */
   }
 }
+
+/* Additional Information */
+.container-additional-info {
+  max-width: 800px;
+  margin: 10px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.container-additional-info h1 {
+  text-align: center;
+  color: #007bff;
+  font-size: 26px;
+  margin-bottom: 20px;
+}
+
+.container-additional-info label {
+  font-weight: bold;
+  color: #333;
+  padding-top: 15px;
+}
+
+.container-additional-info input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.container-additional-info input:focus, select:focus, textarea:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.btn-additional-info {
+  width: 100%;
+  background: #007bff;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 15px;
+}
+
+.btn-additional-info:hover {
+  background: #0056b3;
+}
