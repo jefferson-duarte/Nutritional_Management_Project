@@ -1,117 +1,151 @@
 {% extends "global/base.html" %}
+{% load custom_filters %}
 
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-
-  <div class="container mx-auto">
+<div class="container mx-auto">
     <h1 class="text-3xl font-bold mb-6 text-center">Nutritionist Dashboard: {{nutri_profile}}</h1>
 
-    <!-- Patients List -->
-    <div class="bg-white p-6 rounded-lg shadow mb-6">
-      <h2 class="text-xl font-semibold mb-4">Patients List</h2>
-      <div class="patient-list">
-        {% if customers %}
-          {% for customer in customers %}
-            <div class="flex items-center justify-between p-4 border-b cursor-pointer" onclick="showPatientDetails('{{customer.user.id}}')">
-              <div class="flex items-center gap-4">
-                {% if customer.image %}
-                  <img src={{customer.image.url}} alt="{{customer.user.first_name}} {{customer.user.last_name}}">
-                {% else %}
-                  <div class="w-12 h-12 bg-gray-200 rounded-full"></div>
-                {% endif %}
-                <div>
-                  <p class="font-semibold">{{customer.user.first_name}} {{customer.user.last_name}}</p>
-                  <p class="text-lg text-gray-600">Active</p>
-                </div>
-              </div>
-              <div class="p-2">
-                <button class="bg-blue-500 text-white px-3 py-2 rounded-lg">
-                  <a href="{% url 'update_customer' customer.id %}" class="text-white-500 hover:text-white-700">Edit</a>
-                </button>
-                <button class="bg-green-500 text-white px-3 py-2 rounded-lg">
-                  <a href="{% url 'plan_create' customer.id %}" class="text-white hover:text-gray-200">
-                    Create Nutritional Plan
-                  </a>
-                </button>
-                <button class="bg-green-500 text-white px-3 py-2 rounded-lg">
-                  <a href="{% url 'plan_list' customer.id %}" class="text-white hover:text-gray-200">
-                    List Nutritional Plan
-                  </a>
-                </button>
-                <p class="text-lg text-gray-600">Last appointment: </p>
-                <p>{{customer.last_appointment|date:"d/m/Y"}}</p>
-              </div>
-            </div>
-          {% endfor %}
+    <!-- Flex container to display patients list and upcoming appointments side by side -->
+    <div class="flex flex-wrap">
         
-          <!-- Pagination -->
-          <div class="pagination">
-            {% if customers.has_previous %}
-              <a href="?page=1" class="page-link">« First</a>
-              <a href="?page={{ customers.previous_page_number }}" class="page-link">‹ Previous</a>
+        <!-- Upcoming Appointments Section -->
+        <div class="bg-white p-6 rounded-lg shadow mb-6 w-full md:w-1/2">
+            <h2 class="text-xl font-semibold mb-4">Upcoming Appointments</h2>
+            {% if appointments %}
+                <ul class="list-group">
+                    {% for appointment in appointments %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ appointment.customer.user.first_name }} - {{ appointment.date }}
+                            <div>
+                                <a href="{% url 'reschedule_appointment' appointment.id %}" class="btn btn-warning">Reschedule</a>
+                                <a href="{% url 'cancel_appointment' appointment.id %}" class="btn btn-danger">Cancel</a>
+                                <a href="{% url 'confirm_delete_appointment' appointment.id %}" class="btn btn-danger">Delete</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No upcoming appointments.</p>
             {% endif %}
+        </div>
 
-            <span class="page-info">
-              Page <strong>{{ customers.number }}</strong> of <strong>{{ customers.paginator.num_pages }}</strong>
-            </span>
+        <!-- Patients List Section -->
+        <div class="bg-white p-6 rounded-lg shadow mb-6  w-full md:w-1/2">
+            <h2 class="text-xl font-semibold mb-4">Patients List</h2>
+            <div class="patient-list">
+                {% if customers %}
+                    {% for customer in customers %}
+                        <div class="flex items-center justify-between p-4 border-b cursor-pointer" onclick="showPatientDetails('{{customer.user.id}}')">
+                            <div class="flex items-center gap-4">
+                                {% if customer.image %}
+                                    <img src={{customer.image.url}} alt="{{customer.user.first_name}} {{customer.user.last_name}}">
+                                {% else %}
+                                    <div class="w-12 h-12 bg-gray-200 rounded-full"></div>
+                                {% endif %}
+                                <div>
+                                    <p class="font-semibold">{{customer.user.first_name}} {{customer.user.last_name}}</p>
+                                    <p class="text-lg text-gray-600">Active</p>
+                                </div>
+                            </div>
+                            <div class="p-2">
+                                <button class="bg-blue-500 text-white px-3 py-2 rounded-lg">
+                                    <a href="{% url 'update_customer' customer.id %}" class="text-white-500 hover:text-white-700">Edit</a>
+                                </button>
+                                <button class="bg-green-500 text-white px-3 py-2 rounded-lg">
+                                    <a href="{% url 'plan_create' customer.id %}" class="text-white hover:text-gray-200">
+                                        Create Nutritional Plan
+                                    </a>
+                                </button>
+                                <button class="bg-green-500 text-white px-3 py-2 rounded-lg">
+                                    <a href="{% url 'plan_list' customer.id %}" class="text-white hover:text-gray-200">
+                                        List Nutritional Plan
+                                    </a>
+                                </button>
+                                <a href="{% url 'schedule_appointment' %}" class="btn btn-success">Create Appointment</a>
 
-            {% if customers.has_next %}
-              <a href="?page={{ customers.next_page_number }}" class="page-link">Next ›</a>
-              <a href="?page={{ customers.paginator.num_pages }}" class="page-link">Last »</a>
-            {% endif %}
-          </div>
-        {% else %}
-          <p class="no-data">No patients to list</p>
-        {% endif %}
+                                <p class="text-lg text-gray-600">
+                                    Last appointment:
+                                    {% with last_appointments|get_item:customer.id as last_appointment %}
+                                        {% if last_appointment %}
+                                            {{ last_appointment.date|date:"d/m/Y H:i" }}
+                                        {% else %}
+                                            No appointments
+                                        {% endif %}
+                                    {% endwith %}
+                                </p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    
+                    <!-- Pagination -->
+                    <div class="pagination">
+                        {% if customers.has_previous %}
+                            <a href="?page=1" class="page-link">« First</a>
+                            <a href="?page={{ customers.previous_page_number }}" class="page-link">‹ Previous</a>
+                        {% endif %}
 
-      <!-- Messages -->
-      <div class="messages-container">
-        {% if messages %}
-          {% for message in messages %}
-            <div class="alert {{message.tags}} mt-3">
-              {{message}}
+                        <span class="page-info">
+                            Page <strong>{{ customers.number }}</strong> of <strong>{{ customers.paginator.num_pages }}</strong>
+                        </span>
+
+                        {% if customers.has_next %}
+                            <a href="?page={{ customers.next_page_number }}" class="page-link">Next ›</a>
+                            <a href="?page={{ customers.paginator.num_pages }}" class="page-link">Last »</a>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p class="no-data">No patients to list</p>
+                {% endif %}
             </div>
-          {% endfor %}
+        </div>
+
+    </div>
+
+    <!-- Messages -->
+    <div class="messages-container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {{message.tags}} mt-3">
+                    {{message}}
+                </div>
+            {% endfor %}
         {% endif %}
-      </div>
     </div>
 
     <!-- Patient Details (Full Profile) -->
     {% for customer in customers %}
-      <div id="patient-details-{{customer.user.id}}" class="patient-details bg-white p-6 rounded-lg shadow mb-6" style="display: none;">
-        <h2 class="text-xl font-semibold mb-4">Full Profile - {{customer.user.first_name}} {{customer.user.last_name}}</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <p><strong>Age:</strong> {{customer.age}} years</p>
-            <p><strong>Gender:</strong> {{customer.gender}}</p>
-            <p><strong>Height:</strong> {{customer.height}} m</p>
-            <p><strong>Weight:</strong> {{customer.weight}} kg</p>
-          </div>
-          <div>
-            <p><strong>Nutritional Goal:</strong> {{customer.nutritional_goal}}</p>
-            {% comment %} <p><strong>Diet Plan:</strong> {{customer.diet_plan}}</p> {% endcomment %}
-            <p><strong>Allergies:</strong> {{customer.allergies}}</p>
-            {% comment %} <p><strong>Last Appointment:</strong> {{customer.last_appointment|date:"d/m/Y"}}</p> {% endcomment %}
-          </div>
+        <div id="patient-details-{{customer.user.id}}" class="patient-details bg-white p-6 rounded-lg shadow mb-6" style="display: none;">
+            <h2 class="text-xl font-semibold mb-4">Full Profile - {{customer.user.first_name}} {{customer.user.last_name}}</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <p><strong>Age:</strong> {{customer.age}} years</p>
+                    <p><strong>Gender:</strong> {{customer.gender}}</p>
+                    <p><strong>Height:</strong> {{customer.height}} m</p>
+                    <p><strong>Weight:</strong> {{customer.weight}} kg</p>
+                </div>
+                <div>
+                    <p><strong>Nutritional Goal:</strong> {{customer.nutritional_goal}}</p>
+                    <p><strong>Allergies:</strong> {{customer.allergies}}</p>
+                </div>
+            </div>
         </div>
-      </div>
     {% endfor %}
-  </div>
+</div>
 
-  <script>
+<script>
     function showPatientDetails(patientId) {
-      // Hide all patient details
-      document.querySelectorAll('.patient-details').forEach(detail => {
-        detail.style.display = 'none';
-      });
+        // Hide all patient details
+        document.querySelectorAll('.patient-details').forEach(detail => {
+            detail.style.display = 'none';
+        });
 
-      // Show the selected patient's details
-      const details = document.getElementById(`patient-details-${patientId}`);
-      if (details) {
-        details.style.display = 'block';
-      }
+        // Show the selected patient's details
+        const details = document.getElementById(`patient-details-${patientId}`);
+        if (details) {
+            details.style.display = 'block';
+        }
     }
-  </script>
+</script>
 
 {% endblock %}

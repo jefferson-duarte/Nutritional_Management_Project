@@ -1,0 +1,26 @@
+{% extends "global/base.html" %}  <!-- Inherits the base template for consistent structure across pages -->
+{% block title %}Confirm Delete Appointment{% endblock %}  <!-- Sets the title of the page to "Confirm Delete Appointment" -->
+
+{% block content %}
+<div class="appoiment-container mx-auto">  <!-- Container for the appointment confirmation page -->
+  <h1 class="text-3xl font-bold mb-6 text-center">Confirm Delete Appointment</h1>  <!-- Header for the page -->
+
+  <div class="bg-white p-6 rounded-lg shadow mb-6">  <!-- Card-like box to display appointment details -->
+    <h2 class="text-xl font-semibold mb-4">Are you sure you want to delete the appointment?</h2>  <!-- Question asking for confirmation -->
+    
+    <!-- Displays the customer's full name, appointment date, and any notes associated with the appointment -->
+    <p><strong>Customer:</strong> {{ appointment.customer.user.first_name }} {{ appointment.customer.user.last_name }}</p>
+    <p><strong>Date:</strong> {{ appointment.date|date:"d/m/Y H:i" }}</p>
+    <p><strong>Notes:</strong> {{ appointment.notes }}</p>
+
+    <!-- Form to submit the delete action -->
+    <form method="post">
+      {% csrf_token %}  <!-- CSRF token for security to prevent cross-site request forgery attacks -->
+      <button type="submit" class="btn btn-danger mt-4">Delete</button>  <!-- Button to confirm appointment deletion -->
+    </form>
+    
+    <!-- Link to cancel the action and return to the dashboard -->
+    <a href="{% url 'dashboard' %}" class="btn btn-success mt-4">Cancel</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,10 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from authentication.models import CustomerProfile, NutritionistProfile
 from nutritional_plans.models import NutritionalPlan
+
+from .forms import AppointmentForm
+from .models import Appointment
 
 
 def dashboard(request):
@@ -19,13 +22,24 @@ def dashboard(request):
                 nutritionist=nutri_profile
             )
 
+            last_appointments = {}
+
+            for customer in customers:
+                last_appointment = Appointment.objects.filter(customer=customer).order_by('-date').first()  # noqa:E501
+                last_appointments[customer.id] = last_appointment
+
+            appointments = Appointment.objects.filter(
+                nutritionist=nutri_profile).order_by('date')
+
             paginator = Paginator(customers, 3)
             page_number = request.GET.get('page', 1)
             page_obj = paginator.get_page(page_number)
 
             context = {
                 'customers': page_obj,
-                'nutri_profile': nutri_profile
+                'appointments': appointments,
+                'nutri_profile': nutri_profile,
+                'last_appointments': last_appointments,
             }
 
             return render(
@@ -45,6 +59,9 @@ def dashboard(request):
                 client=request.user
             )
 
+            customer_appointments = Appointment.objects.filter(
+                customer=customer_profile).order_by('date')
+
             available_nutritionists = NutritionistProfile.objects.exclude(
                 user__customerprofile__isnull=False
             )
@@ -60,6 +77,7 @@ def dashboard(request):
                     'nutritionist': nutritionist,
                     'nutritional_plans': nutritional_plans,
                     'available_nutritionists': page_obj,
+                    'appointments': customer_appointments,
                 }
             )
 
@@ -87,3 +105,109 @@ def select_nutritionist(request, nutritionist_id):
         messages.error(request, "Selected nutritionist does not exist.")
 
     return redirect('dashboard')
+
+
+def schedule_appointment(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "You need to be logged in.")
+        return redirect("login_create")
+
+    nutritionist_profile = NutritionistProfile.objects.filter(
+        user=request.user).first()
+    if not nutritionist_profile:
+        messages.error(
+            request, "Only nutritionists can schedule appointments.")
+        return redirect("dashboard")
+
+    customers = CustomerProfile.objects.filter(
+        nutritionist=nutritionist_profile  # noqa:E501
+    )
+
+    if request.method == "POST":
+        form = AppointmentForm(request.POST, user=request.user)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.nutritionist = nutritionist_profile
+            appointment.save()
+            messages.success(request, "Appointment scheduled successfully!")
+            return redirect("dashboard")
+    else:
+        form = AppointmentForm(user=request.user)  # Passa o usuário logado
+
+    context = {
+        "form": form,
+        "customers": customers,
+    }
+
+    return render(request, "appointments/schedule_appointment.html", context)  # noqa:E501
+
+
+def cancel_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+
+    if request.user != appointment.nutritionist.user:
+        messages.error(request, "You can only cancel your own appointments.")
+        return redirect("dashboard")
+
+    appointment.status = "canceled"
+    appointment.save()
+    messages.success(request, "Appointment canceled successfully.")
+    return redirect("dashboard")
+
+
+def reschedule_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+
+    if request.user != appointment.nutritionist.user:
+        messages.error(
+            request, "You can only reschedule your own appointments.")
+        return redirect("dashboard")
+
+    customers = CustomerProfile.objects.filter(
+        nutritionist=appointment.nutritionist
+    )
+
+    if request.method == "POST":
+        form = AppointmentForm(request.POST, instance=appointment)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Appointment rescheduled successfully!")
+            return redirect("dashboard")
+    else:
+        form = AppointmentForm(instance=appointment)
+
+    context = {
+        "form": form,
+        "customers": customers,
+    }
+
+    return render(request, "appointments/reschedule_appointment.html", context)  # noqa:E501
+
+
+def confirm_delete_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+
+    if request.user != appointment.nutritionist.user:
+        messages.error(request, "You can only delete your own appointments.")
+        return redirect("dashboard")
+
+    if request.method == "POST":
+        appointment.delete()
+        messages.success(request, "Appointment deleted successfully!")
+        return redirect("dashboard")
+
+    return render(request, "appointments/confirm_delete_appointment.html", {
+        "appointment": appointment
+    })
+
+
+def delete_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+
+    if request.user != appointment.nutritionist.user:
+        messages.error(request, "You can only delete your own appointments.")
+        return redirect("dashboard")
+
+    appointment.delete()
+    messages.success(request, "Appointment deleted successfully!")
+    return redirect("dashboard")

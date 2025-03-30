@@ -1,0 +1,36 @@
+{% extends "global/base.html" %}  <!-- Inherits the base template for consistent structure across pages -->
+
+{% block title %}Schedule Appointment{% endblock %}  <!-- Sets the title of the page to "Schedule Appointment" -->
+
+{% block content %}
+<div class="container mx-auto">  <!-- Container to center the content on the page -->
+    <h1 class="text-3xl font-bold mb-6">Schedule Appointment</h1>  <!-- Header for the page -->
+
+    <form method="post">  <!-- Form to submit the appointment scheduling request -->
+        {% csrf_token %}  <!-- CSRF token for security to prevent cross-site request forgery attacks -->
+        
+        <div class="form-group">  <!-- Form group for selecting the patient -->
+            <label for="{{ form.customer.id_for_label }}">Select Patient:</label>
+            <select name="customer" id="{{ form.customer.id_for_label }}" class="form-control">
+                {% for customer in form.customer.field.queryset %}  <!-- Loop through all available customers to display in a dropdown -->
+                    <option value="{{ customer.id }}" {% if customer.id == form.customer.value %}selected{% endif %}>
+                        {{ customer.user.first_name }} {{ customer.user.last_name }}  <!-- Display the patient's first and last name -->
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">  <!-- Form group for selecting the appointment date -->
+            <label for="{{ form.date.id_for_label }}">Date:</label>
+            {{ form.date }}  <!-- Render the form field for the date -->
+        </div>
+
+        <div class="form-group">  <!-- Form group for entering appointment notes -->
+            <label for="{{ form.notes.id_for_label }}">Notes:</label>
+            {{ form.notes }}  <!-- Render the form field for notes -->
+        </div>
+
+        <button type="submit" class="bg-green-500 text-white p-2 rounded-lg mt-4">Schedule</button>  <!-- Button to submit the scheduling form -->
+    </form>
+</div>
+{% endblock %}
