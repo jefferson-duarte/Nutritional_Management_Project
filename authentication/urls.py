@@ -32,4 +32,5 @@ urlpatterns += [
     path('register/customer/', site.register_customer, name='register_customer'),  # noqa: E501
     path('update/customer/<int:customer_id>/', site.CustomerUpdateView.as_view(), name='update_customer'),  # noqa: E501
     path('additional-info/', site.additional_info, name='additional_info'),
+    path('logout/', site.logout_view, name='logout'),
 ]

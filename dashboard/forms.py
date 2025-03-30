@@ -25,3 +25,12 @@ class AppointmentForm(forms.ModelForm):
                 self.fields['customer'].queryset = CustomerProfile.objects.filter(  # noqa: E501
                     nutritionist=nutritionist_profile
                 )
+
+
+class CustomerAppointmentForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ["date", "notes"]
+        widgets = {
+            "date": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+        }

@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from authentication.models import CustomerProfile, NutritionistProfile
 from nutritional_plans.models import NutritionalPlan
 
-from .forms import AppointmentForm
+from .forms import AppointmentForm, CustomerAppointmentForm
 from .models import Appointment
 
 
@@ -28,16 +28,20 @@ def dashboard(request):
                 last_appointment = Appointment.objects.filter(customer=customer).order_by('-date').first()  # noqa:E501
                 last_appointments[customer.id] = last_appointment
 
-            appointments = Appointment.objects.filter(
+            customer_appointments = Appointment.objects.filter(
                 nutritionist=nutri_profile).order_by('date')
 
             paginator = Paginator(customers, 3)
             page_number = request.GET.get('page', 1)
             page_obj = paginator.get_page(page_number)
 
+            appointments_paginator = Paginator(customer_appointments, 3)  # noqa:E501
+            appointments_page_number = request.GET.get('appointments_page', 1)
+            appointments_page_obj = appointments_paginator.get_page(appointments_page_number)  # noqa:E501
+
             context = {
                 'customers': page_obj,
-                'appointments': appointments,
+                'appointments': appointments_page_obj,
                 'nutri_profile': nutri_profile,
                 'last_appointments': last_appointments,
             }
@@ -211,3 +215,64 @@ def delete_appointment(request, appointment_id):
     appointment.delete()
     messages.success(request, "Appointment deleted successfully!")
     return redirect("dashboard")
+
+
+@login_required
+def customer_appointments(request):
+    appointments = Appointment.objects.filter(
+        customer=request.user.customerprofile).order_by('date')
+
+    context = {
+        'appointments': appointments,
+    }
+
+    return render(request, 'appointments/customer_appointments.html', context)
+
+
+def create_appointment(request):
+    if not request.user.customerprofile.nutritionist:
+        messages.error(request, "You need to select a nutritionist first.")
+        return redirect('dashboard')
+
+    if request.method == "POST":
+        form = CustomerAppointmentForm(request.POST)
+        if form.is_valid():
+            form.instance.nutritionist = request.user.customerprofile.nutritionist  # noqa:E501
+            form.instance.customer = request.user.customerprofile
+            form.save()
+            messages.success(request, "Your appointment has been scheduled!")
+            return redirect('dashboard')
+    else:
+        form = CustomerAppointmentForm()
+
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'appointments/create_appointment.html', context)
+
+
+def edit_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+
+    if appointment.customer.user != request.user:
+        messages.error(request, "You can only edit your own appointments.")
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        form = CustomerAppointmentForm(
+            request.POST, instance=appointment)
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request, "Your appointment has been updated successfully!")
+            return redirect('dashboard')
+    else:
+        form = CustomerAppointmentForm(instance=appointment)
+
+    context = {
+        'form': form,
+        'appointment': appointment,
+    }
+
+    return render(request, 'appointments/edit_appointment.html', context)
